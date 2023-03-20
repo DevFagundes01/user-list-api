@@ -1,7 +1,7 @@
 const { response } = require('express')
 const express = require('express')
-const uuid=require('uuid')
-import cors from 'cors'
+const uuid = require('uuid')
+const cors = require('cors')
 
 const port=3001
 const app = express() 
