@@ -3,7 +3,7 @@ const express = require('express')
 const uuid = require('uuid')
 const cors = require('cors')
 
-const port=3001
+const port = process.env.PORT || 3001
 const app = express() 
 app.use(express.json())
 app.use(cors())
@@ -23,7 +23,7 @@ const checkUserId=(request, response, next) => {
 }
 
 app.get('/users', (request, response) => {
-    return response.json(users)
+    return response.json(users).json("hello world")
 })
 
 app.post('/users', (request, response) => {
