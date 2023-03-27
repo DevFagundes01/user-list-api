@@ -21,7 +21,7 @@ const checkUserId=(request, response, next) => {
     request.userIndex=index
 
     next()
-}
+} 
 
 app.get('/users', (request, response) => {
     return response.json(users)
