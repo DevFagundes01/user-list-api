@@ -23,6 +23,10 @@ const checkUserId=(request, response, next) => {
     next()
 } 
 
+app.get("/", (req, res) => {
+  return res.json("hello world");
+});
+
 app.get('/users', (request, response) => {
     return response.json(users)
 })
