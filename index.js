@@ -36,6 +36,7 @@ app.post('/users', (request, response) => {
     const user={id:uuid.v4(), name, age}
 
     users.push(user)
+    
     return response.status(201).json(users)
 })
 
