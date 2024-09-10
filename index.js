@@ -1,64 +1,80 @@
-const { response } = require('express')
-const express = require('express')
+import express from 'express'
+import { PrismaClient } from '@prisma/client'
 
-const uuid = require('uuid')
-const cors = require('cors')
+const prisma = new PrismaClient()
+
+// import { uuid } from 'uuid'
+// import cors from 'cors'
 
 const port = process.env.PORT || 3001
-const app = express() 
+const app = express()
 app.use(express.json())
-app.use(cors())
+// app.use(cors())
 
-const users=[] 
+// const checkUserId = (req, res, next) => {
+//     const { id } = req.params
+//     const index = users.findIndex(user => user.id === id)
 
-const checkUserId=(request, response, next) => {
-    const {id}=request.params
-    const index=users.findIndex(user => user.id===id)
+//     if (index < 0) {
+//         return res.status(404).json({ message: "User not found" })
+//     }
+//     req.userIndex = index
 
-    if(index<0){
-        return response.status(404).json({message:"User not found"})
-    }
-    request.userIndex=index
-
-    next()
-} 
+//     next()
+// }
 
 app.get("/", (req, res) => {
-  return res.json("hello world");
+    return res.json("hello world");
 });
 
-app.get('/users', (request, response) => {
-    return response.json(users)
+app.get('/users', async (req, res) => {
+    const users = await prisma.user.findMany()
+
+    res.status(200).json(users)
 })
 
-app.post('/users', (request, response) => {
-    const {name, age}=request.body
-    const user={id:uuid.v4(), name, age}
+app.post('/users', async (req, res) => {
+    const user = await prisma.user.create({
+        data: {
+            email: req.body.email,
+            age: req.body.age,
+            name: req.body.name
+        }
+    })
 
-    users.push(user)
-    
-    return response.status(201).json(users)
+    res.status(201).json(user)
 })
 
-app.put('/users/:id', checkUserId, (request, response) => {
-    const {name, age}=request.body
-    const index=request.userIndex
-    const id=request.userId
-    const updateUser={id, name, age}
+app.put('/users/:id', async (req, res) => {
+    const user = await prisma.user.update({
+        where: {
+            id: req.params.id
+        },
+        data: {
+            email: req.body.email,
+            age: req.body.age,
+            name: req.body.name
+        }
+    })
 
-    users[index]=updateUser
-
-    return response.json(updateUser)
+    res.status(200).json(user)
 })
 
-app.delete('/users/:id', checkUserId, (request, response) => {
-    const index=request.userIndex
+app.delete('/users/:id', async (req, res) => {
+    await prisma.user.delete({
+        where: {
+            id: req.params.id
+        }
+    })
 
-    users.splice(index,1)
-
-    return response.status(204).json()
+    res.status(204).json({message: 'user deleted successfully'})
 })
 
-app.listen(port, () =>{
+app.listen(port, () => {
     console.log('🚀🚀🚀')
 })
+
+/*
+fagundediego2015
+9aBxBidThMWZuNqT
+*/
