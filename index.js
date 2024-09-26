@@ -1,27 +1,14 @@
 import express from 'express'
 import { PrismaClient } from '@prisma/client'
+import cors from 'cors'
 
 const prisma = new PrismaClient()
 
-// import { uuid } from 'uuid'
-// import cors from 'cors'
-
 const port = process.env.PORT || 3001
+
 const app = express()
 app.use(express.json())
-// app.use(cors())
-
-// const checkUserId = (req, res, next) => {
-//     const { id } = req.params
-//     const index = users.findIndex(user => user.id === id)
-
-//     if (index < 0) {
-//         return res.status(404).json({ message: "User not found" })
-//     }
-//     req.userIndex = index
-
-//     next()
-// }
+app.use(cors())
 
 app.get("/", (req, res) => {
     return res.json("hello world");
@@ -34,15 +21,25 @@ app.get('/users', async (req, res) => {
 })
 
 app.post('/users', async (req, res) => {
-    const user = await prisma.user.create({
-        data: {
-            email: req.body.email,
-            age: req.body.age,
-            name: req.body.name
+    try {
+        const user = await prisma.user.create({
+            data: {
+                email: req.body.email,
+                age: req.body.age,
+                name: req.body.name
+            }
+        })
+    
+        console.log('Created user:', user)
+    
+        res.status(201).json(user)
+    } catch (error) {
+        if (error.code === 'P2002') {
+            res.status(409).json({ message: 'This email is already in use. Please use a different email.'})
+        } else {
+            res.status(500).json({ message: 'Error creating user:', error: error.message})
         }
-    })
-
-    res.status(201).json(user)
+    }
 })
 
 app.put('/users/:id', async (req, res) => {
@@ -67,14 +64,9 @@ app.delete('/users/:id', async (req, res) => {
         }
     })
 
-    res.status(204).json({message: 'user deleted successfully'})
+    res.status(204).json({ message: 'user deleted successfully' })
 })
 
 app.listen(port, () => {
-    console.log('🚀🚀🚀')
+    console.log(`${port} 🚀🚀🚀`)
 })
-
-/*
-fagundediego2015
-9aBxBidThMWZuNqT
-*/
