@@ -8,7 +8,7 @@
     "node": "18"
   },
   "scripts": {
-    "build": "prisma generate", 
+    "postinstall": "prisma generate", 
     "start": "node index.js",
     "dev": "node --watch index.js"
   },

@@ -8,7 +8,11 @@ const port = process.env.PORT || 3001
 
 const app = express()
 app.use(express.json())
-app.use(cors())
+
+app.use(cors({
+    // origin: "http://localhost:5173"
+    origin: "https://react-app-devclub.netlify.app"
+}))
 
 app.get("/", (req, res) => {
     return res.json("hello world");
